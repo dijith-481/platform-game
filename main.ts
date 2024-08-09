@@ -10,7 +10,6 @@ class Background {
     src: string;
     x: number;
     speed: number;
-
     constructor(src: string, speed: number) {
         this.img = new Image();
         this.src = src;
@@ -47,7 +46,10 @@ class Player {
     private endPos:number=CANVAS_WIDTH*4/8;
     private startPos =CANVAS_WIDTH/16;
     private playerMovementArea:number=this.endPos-this.startPos;
-    keys:{[key:string]:number}
+     width:number=100;
+    height:number=100
+
+   keys:{[key:string]:number}
     constructor() {
         this.x =  0;
         this.y = 400;
@@ -65,10 +67,13 @@ class Player {
             
             this.yvelocity =-25;
         }
+        if (key=='s'){
+            this.height=50;
+        }
         
-        if (key=='a' && this.xvelocity>-5 ){
-            this.xvelocity -=0.5;
-            
+        if (key=='a' ){
+           this.xvelocity =Math.floor(this.xvelocity*0.95)
+           initialSpeed =Math.floor(initialSpeed*0.6) 
         }
         if (key=='d' && this.xvelocity<100){
             this.xvelocity +=0.5;
@@ -102,6 +107,7 @@ class Player {
         console.log(this.xvelocity)
     }
     private updateGameSpeed(){
+        initialSpeed<5?initialSpeed+=0.1:initialSpeed;
         const playermovedis = (this.x-this.startPos)/this.playerMovementArea
            const sin = Math.sin(playermovedis*Math.PI/2)*3/2
         gameSpeed = initialSpeed   +this.xvelocity*sin
@@ -113,7 +119,8 @@ class Player {
         this.updateGameSpeed();
         this.x += this.playerSpeed;
         ctx.fillStyle = 'red';
-        ctx.fillRect(this.x, this.y, 100, 100);
+        ctx.fillRect(this.x, this.y, this.width, this.height
+        );
 
 
 
@@ -135,6 +142,10 @@ class Player {
         })
         
     }
+}
+class Events{
+    listeners=[]
+    
 }
 const backgroundLayers: Background[] = [
     new Background('/backgrounds/layer0.png', 0.2),
