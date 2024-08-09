@@ -1,2 +1,4 @@
 .idx
 .vscode
+*.js
+*.js.map
