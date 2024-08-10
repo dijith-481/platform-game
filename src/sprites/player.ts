@@ -12,6 +12,7 @@ export class Player {
      width:number=100;
     height:number=100
     eventManager:EventManager;
+    keyPressed:{[key:string]:boolean}
     constructor(eventManager:EventManager,canvasWidth:number){
         this.x =  0;
         this.y = 400;
@@ -20,25 +21,33 @@ export class Player {
         this.startPos=canvasWidth/16;
         this.playerMovementArea=this.endPos-this.startPos;
         this.eventManager = eventManager;
+        this.keyPressed={
+            a:false,
+            s:false,
+            w:false,
+            d:false
+        }
+        this.addEventListeners();
+    }
+    private addEventListeners(){
 
-        this.eventManager.subscribe('w',this.handleMovementUp.bind(this));
-        this.eventManager.subscribe('s',this.handleMovementDown.bind(this));
-        this.eventManager.subscribe('a',this.handleMovementLeft.bind(this));
-        this.eventManager.subscribe('d',this.handleMovementRight.bind(this));
+        this.eventManager.subscribe('keyup',(eventdata:string)=>{
+                this.handleKeyUp(eventdata)});
+        this.eventManager.subscribe('keydown',(eventdata:string)=>{
+                this.handleKeyDown(eventdata)});
     }
-    private handleMovementUp(){
-       this.yvelocity = -25;
-       
-    }
-   private handleMovementDown(){
+ 
+   private handleKeyDown(eventdata:string){
+    console.log(eventdata)
+    this.keyPressed[eventdata]=true;
         
     }
-   private handleMovementLeft(){
+  private handleKeyUp(eventdata:string){
+    console.log(eventdata)
+    this.keyPressed[eventdata]=false;
         
     }
-   private handleMovementRight(){
-        
-    }
+
    private updatey(){
     
     this.y+=this.yvelocity;

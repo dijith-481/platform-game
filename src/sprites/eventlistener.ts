@@ -31,13 +31,13 @@ export class EventManager{
         window.addEventListener('keydown', e => {
             if (e.key in this.keys) {
                 this.keys[e.key] = true;
-                this.broadcast(e.key,e.key);
+                this.broadcast('keydown',e.key);
                  const intervalId = setInterval(() => {
         }, 100);
         window.addEventListener('keyup', (upevent) => {
             if (upevent.key == e.key) {
                 this.keys[e.key] = false;
-                this.broadcast(e.key,e.key);
+                this.broadcast('keyup',e.key);
                 clearInterval(intervalId);
             }
         })
