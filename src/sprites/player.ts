@@ -51,8 +51,8 @@ export class Player {
    private updatey(){
     
     this.y+=this.yvelocity;
-    this.yvelocity*=0.99;
-   } 
+    
+} 
        
     private updatex(){
            const playermovedis = (this.x-this.startPos)/this.playerMovementArea

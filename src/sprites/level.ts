@@ -40,6 +40,7 @@ export class Level {
             image.src = images[i];
             this.tileimages[i] = image;
         }
+        console.log(this.tileimages)
     }
             
      async loadLevel(levelPath: string) {
@@ -85,13 +86,14 @@ class Tile{
         this.width = this.height = tileSize;
         this.ctx =ctx;
         this.img=img
+        this.draw(this.x,0);
 
     }
     update(deltax:number,deltay:number ,camerax:number,cameray:number){
         this.x+=deltax;
         this.y+=deltay;
-        const rx =camerax-this.x;
-        const ry =cameray-this.y;
+        const rx = this.x-camerax
+        const ry = this.y-cameray
             this.draw(rx,ry);
     }
     draw(x:number,y:number){
