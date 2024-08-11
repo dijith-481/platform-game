@@ -18,40 +18,26 @@ let imagesLoaded = 0;
 
 function animate() {
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    animateBg();
+    
     animatePlayer();
 
 
     requestAnimationFrame(animate);
 }
-function animateBg() {
-    backgroundLayers.forEach(layer => {
-        layer.update();
-    });
-}
+
 function animatePlayer() {
     player.update();
 }
 const eventManager = new EventManager();
 
 const player = new Player(eventManager,CANVAS_WIDTH);
-const backgroundLayers: Background[] = [
-    new Background('/backgrounds/layer0.png', 0.2,ctx),
-    new Background('/backgrounds/layer1.png', 0.3,ctx),
-    new Background('/backgrounds/layer2.png', 0.4,ctx),
-    new Background('/backgrounds/layer3.png', 0.5,ctx),
-    new Background('/backgrounds/layer4.png', 0.6,ctx),
-    new Background('/backgrounds/layer5.png', 0.7,ctx),
-    new Background('/backgrounds/layer6.png', 0.8,ctx),
-    new Background('/backgrounds/layer7.png', 0.9,ctx),
-    new Background('/backgrounds/layer8.png',1 ,ctx),
-    new Background('/backgrounds/layer9.png', 1.1,ctx),
-];
-const level = new Level(ctx,'../levels/level1.json',CANVAS_WIDTH,{x:0,y:0,w:0,h:0})
-//animatelevel();
+;
+const tileSize = CANVAS_HEIGHT/20
+const level = new Level(ctx,'../levels/level1.json',tileSize,{x:0,y:0,w:CANVAS_WIDTH,h:CANVAS_HEIGHT})
+animatelevel();
 
 function animatelevel(){
-    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+   // ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     level.update(0,0,0,0);
     requestAnimationFrame(animatelevel);
 }
