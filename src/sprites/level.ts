@@ -1,74 +1,68 @@
 export class Level {
-    MAP_WIDTH = 100;
-    MAP_HEIGHT = 100;
     x:number = 0;
     y:number = 0;
-    width:number;
-    height:number; 
-    tiles: Tile[] = [];
+    platforms : Platform[]=[];
     tileSize:number;
     ctx: CanvasRenderingContext2D;
-    levelArray!:number[][];
-    tileimages: HTMLImageElement[] = [];
-    constructor(ctx: CanvasRenderingContext2D,width:number,height:number,levelPath:string) {
-        this.width = width;
-        this.height = height;
-        this.tileSize = height/20;
+    camera:{x:number,y:number,w:number,h:number};
+    levelArray!:{ id :number ,type: string, x: number, y: number, w: number, h: number }[];
+    platformArray:{ id:number, type: string, x: number, y: number, w: number, h: number }[]=[];
+    private id:number=0;
+    constructor(ctx: CanvasRenderingContext2D,levelPath:string,tileSize:number,camera:{x:number,y:number,w:number,h:number}) {
+        this.tileSize = tileSize;
         this.ctx =ctx;
-        this.loadTileImages();
+        this.camera = camera;
         this.loadLevel(levelPath);
         
         
     }
-    loadTileImages() {
-        const images =['../assets/grounds/1.png',
-                        '../assets/grounds/2.png',
-                        '../assets/grounds/3.png',
-                        '../assets/grounds/4.png',
-                        '../assets/grounds/5.png',
-                        '../assets/grounds/6.png',
-                        '../assets/grounds/7.png',
-                        '../assets/grounds/8.png',
-                        '../assets/grounds/9.png',
-                        '../assets/grounds/10.png',
-                        '../assets/grounds/11.png',
-                        '../assets/grounds/12.png',
-                        '../assets/grounds/13.png',
-        ]
-        for (let i = 0; i < images.length; i++) {
-            const image = new Image();
-            image.src = images[i];
-            this.tileimages[i] = image;
-        }
-        console.log(this.tileimages)
-    }
+    
             
      async loadLevel(levelPath: string) {
          try {
              const response = await fetch(levelPath);
              const levelData = await response.json();
-            this.levelArray = Object.values(levelData)[0] as number[][];
+            this.levelArray = Object.values(levelData)[0] as  { id :number ,type: string, x: number, y: number, w: number, h: number }[];
+            this.levelArray = this.levelArray.map((element: { id: number; type: string; x: number; y: number; w: number; h: number }, index: number) => ({
+        ...element, 
+        id: index   
+    }));
             console.log(this.levelArray) 
-        this.createTiles();
+            this.createPlatforms();
          } catch (error) {
              console.error("Error loading level:", error);
          }
      }
-    createTiles(){
-        for (let i = 0; i < this.levelArray.length; i++) {
-            for (let j = 0; j < this.levelArray[i].length; j++) {
-                if(this.levelArray[i][j]==0)continue;
-                console.log(this.levelArray[i][j])
-                const img = this.tileimages[this.levelArray[i][j]-1];
-                const tile = new Tile(this.ctx,img,j,i,this.tileSize);
-                this.tiles.push(tile);
-            }
+    createPlatforms(){
+        this.levelArray.forEach(platform =>{
+                if (platform.x >= this.camera.x && platform.x <= this.camera.x + this.camera.w
+                    && platform.y >= this.camera.y && platform.y <= this.camera.y + this.camera.h
+                ) {
+                    this.platforms.push(new Platform(this.ctx,this.tileSize,platform))
+                    platform.id=this.id;
+                    this.platformArray.push(platform);
+                }
+            })
+    
         }
+    deletePlatforms(){
+        this.platformArray.forEach(platform =>{
+            if (!(platform.x >= this.camera.x && platform.x <= this.camera.x + this.camera.w
+                && platform.y >= this.camera.y && platform.y <= this.camera.y + this.camera.h)
+            )
+                 {
+                   this.levelArray.splice(this.levelArray.indexOf(platform),1);
+                 
+                    this.platforms.push(new Platform(this.ctx,this.tileSize,platform))
+                    this.platformArray.push(platform);
+                }
+            })
+    
+
     }
+    
     update(deltax:number,deltay:number,camerax:number,cameray:number){
-        this.tiles.forEach(tile => {
-            tile.update(deltax,deltay,camerax,cameray);
-        });
+       
     }
     }
 
@@ -78,16 +72,30 @@ class Tile{
     width: number; 
     height: number; 
     ctx: CanvasRenderingContext2D;
-    img:HTMLImageElement;
-    constructor(ctx: CanvasRenderingContext2D,img:HTMLImageElement,x: number, y: number,tileSize:number){ 
+    img!:HTMLImageElement;
+    tile:{
+        x:number,
+        y:number,
+        s:number,
+    }
+    constructor(ctx: CanvasRenderingContext2D,x: number, y: number,tileSize:number,tile: {
+        x:number,
+        y:number,
+        s:number
+    }){ 
 
         this.x = x*tileSize;
         this.y = y*tileSize;
         this.width = this.height = tileSize;
         this.ctx =ctx;
-        this.img=img
         this.draw(this.x,0);
+        this.tile =tile;
+        this.loadTileSet();
 
+    }
+    loadTileSet() {
+         this.img = new Image();
+        this.img.src ='../assets/grounds/ground.png'
     }
     update(deltax:number,deltay:number ,camerax:number,cameray:number){
         this.x+=deltax;
@@ -97,7 +105,67 @@ class Tile{
             this.draw(rx,ry);
     }
     draw(x:number,y:number){
-        this.ctx.drawImage(this.img,x,y,this.width,this.height);
+        this.ctx.drawImage(this.img,this.tile.x,this.tile.y,this.tile.s,this.tile.s,x,y,this.width,this.height);
     }
+    }
+class Platform{
+    x:number;
+    y:number;
+    tiles:Tile[]=[];
+    tileSize:number;
+    width:number;
+    height:number;
+    ctx:CanvasRenderingContext2D;
+    tileimages =[
+        {
+            x:0,
+            y:0,
+            s:32,
+        },
+        {
+            x:32,
+            y:0,
+            s:32,
+        },
+        {
+            x:64,
+            y:0,
+            s:32,
+        },
+        {
+            x:0,
+            y:32,
+            s:32,
+        },
+       
+    ]
+    constructor(ctx:CanvasRenderingContext2D,tileSize:number,tiledata:{id:number,type:string,x:number,y:number,w:number,h:number}){
+        this.tileSize=tileSize;
+        this.x= tiledata.x * this.tileSize;
+        this.y= tiledata.y * this.tileSize;
+        this.width=tiledata.w  ;
+        this.height=tiledata.h;
+        this.ctx=ctx;
+        this.createLeftTopPlatform();
+        this.createTopPlatform(this.width-2);
+
     }
 
+    createLeftTopPlatform(){
+       const tileImg ={
+           x:0,
+           y:0,
+           s:32,
+       } 
+        this.tiles.push(new Tile(this.ctx,this.x,this.y,this.tileSize,tileImg));
+    } 
+    createTopPlatform(width:number){
+       const tileImg ={
+           x:32,
+           y:0,
+           s:32,
+       } 
+        this.tiles.push(new Tile(this.ctx,this.x,this.y,this.tileSize,tileImg));
+    }
+   
+}

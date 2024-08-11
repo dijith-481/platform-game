@@ -47,8 +47,8 @@ const backgroundLayers: Background[] = [
     new Background('/backgrounds/layer8.png',1 ,ctx),
     new Background('/backgrounds/layer9.png', 1.1,ctx),
 ];
-const level = new Level(ctx,CANVAS_WIDTH,CANVAS_HEIGHT,'../levels/level1.json')
-animatelevel();
+const level = new Level(ctx,'../levels/level1.json',CANVAS_WIDTH,{x:0,y:0,w:0,h:0})
+//animatelevel();
 
 function animatelevel(){
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
