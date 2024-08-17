@@ -1,7 +1,20 @@
 {
-   "elements": [
-    {  "x":2, "y":2, "w":3, "h":2 }
-    
+  "element1": [
+    [4,5],
+    ["abbbc",
+     "deeef",
+     "deeef",
+     "deeef",
+     "ghhhi"
+    ]],
+  "element2": [
+    [8,5],
+    ["abbb",
+     "cddd",
+     "cddd",
+     "cddd",
+     "efff"
+    ]
   ]
-  
 }
+

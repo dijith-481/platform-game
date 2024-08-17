@@ -34,11 +34,10 @@ const player = new Player(eventManager,CANVAS_WIDTH);
 ;
 const tileSize = CANVAS_HEIGHT/20
 const level = new Level(ctx,'../levels/level1.json',tileSize,{x:0,y:0,w:CANVAS_WIDTH,h:CANVAS_HEIGHT})
-animatelevel();
+//animatelevel();
 
 function animatelevel(){
    // ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    level.update(0,0,0,0);
     requestAnimationFrame(animatelevel);
 }
-const camera = new Camera(CANVAS_WIDTH,CANVAS_HEIGHT);
+//const camera = new Camera(CANVAS_WIDTH,CANVAS_HEIGHT);
