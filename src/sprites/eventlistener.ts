@@ -1,7 +1,8 @@
 export class EventManager{
+    map:string[][]
     listeners:{[key:string]:Function[]};
     keys:{[key:string]:boolean};
-    constructor(){
+    constructor(map:string[][]){
         this.listeners ={};
         this.keys = {
             w: false,
@@ -9,6 +10,7 @@ export class EventManager{
             s: false,
             d: false,
         }
+       this.map =map;
         this.addEventListeners();
     }
     subscribe(eventName:string,callback:Function){
@@ -46,22 +48,19 @@ export class EventManager{
         })
         
     }
-}
-
-export class Collisions{
-    objectA:any;
-    objectB:any;
-    constructor(objectA:any,objectB:any){
-        this.objectA=objectA;
-        this.objectB=objectB;
-    }
-    checkCollision(){
-
+    checkCollision(x:number,y:number){
+        try{
+            if(this.map[y][x]){
+            return true;
+        }else{
+            return false;
+        }}
+        catch(error){
+            return false;
+        }}
+        
        
-        return (this.objectA.x+this.objectA.width>this.objectB.x ||
-        this.objectA.x<this.objectB.x+this.objectB.width ||
-        this.objectA.y+this.objectA.height<this.objectB.y ||
-        this.objectA.y>this.objectB.y+this.objectB.height );
     }
 
-}
+
+

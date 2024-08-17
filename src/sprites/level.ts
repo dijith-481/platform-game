@@ -1,9 +1,12 @@
 
-type tile = 'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'|'i';
+import { EventManager } from "./eventlistener";
+type tile = 'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'|'i'|'j';
 export class Level {
     x:number = 0;
     y:number = 0;
+    load =0;
     screenRows:number;
+    eventManager:EventManager;
     screenCols:number;
     tileSize:number;
     ctx: CanvasRenderingContext2D;
@@ -14,28 +17,35 @@ export class Level {
     map!:tile[][];
     tiles:Map<tile,Tile> = new Map();
     
-    constructor(ctx: CanvasRenderingContext2D,levelPath:string,tileSize:number,cameraX:number,cameraY:number,screenCols:number,screenRows:number) {
+    constructor(ctx: CanvasRenderingContext2D,eventManager:EventManager,levelPath:string,map:tile[][],tileSize:number,cameraX:number,cameraY:number,screenCols:number,screenRows:number) {
         this.tileSize = tileSize;
         this.ctx =ctx;
         this.cameraX = cameraX;
         this.cameraY= cameraY;
         this.screenCols =screenCols;
         this.screenRows = screenRows;
-        this.map =Array.from({length:this.screenCols},()=>Array(this.screenRows).fill(0));
+        this.map =map;
+        this.eventManager = eventManager;
         this.tileset.src = '../assets/grounds/ground.png';
         this.tileset.onload = () => {
-            this.loadLevelData(levelPath);
-        };
+            this.loading();
+        } 
+        this.loadLevelData(levelPath);
         this.createCommonTiles()
         
         
+    }
+    private loading(){
+        this.load++;
+        if (this.load === 3){
+            this.eventManager.broadcast('levelloaded','levelloaded');
+        }
     }
      async loadLevelData(levelPath: string) {
          try {
              const response = await fetch(levelPath);
              const levelData = await response.json();
             this.levelArray = Object.values(levelData);
-            console.log(this.levelArray)
             this.loadMapItems();
          } catch (error) {
              console.error("Error loading level:", error);
@@ -45,6 +55,7 @@ export class Level {
         this.levelArray.forEach(element =>{
             this.loadItemtoMap(element[1],element[0][0],element[0][1]);
         })
+        this.loading();
     }
     
     
@@ -55,7 +66,6 @@ export class Level {
                 this.map[yindex+y][xindex+x]=tile;
             })
         });
-        console.log(this.map)
     }
    createCommonTiles(){
     this.tiles.set('a',new Tile(this.ctx,this.tileset,this.tileSize,'a'));
@@ -67,7 +77,9 @@ export class Level {
     this.tiles.set('g',new Tile(this.ctx,this.tileset,this.tileSize,'g'));
     this.tiles.set('h',new Tile(this.ctx,this.tileset,this.tileSize,'h'));
     this.tiles.set('i',new Tile(this.ctx,this.tileset,this.tileSize,'i'));
-   } 
+    this.tiles.set('j',new Tile(this.ctx,this.tileset,this.tileSize,'j'));
+    this.loading();
+} 
    render(x:number,y:number){
     this.map.forEach((row,yindex) => {
         row.forEach((tile,xindex) => {
@@ -100,15 +112,15 @@ class Tile{
         'g':[2,0],
         'h':[2,1],
         'i':[2,2],
+        'j':[6,2]
     }
 
-    constructor(ctx: CanvasRenderingContext2D,tileset:HTMLImageElement,tileSize:number,tile:'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'|'i'){
+    constructor(ctx: CanvasRenderingContext2D,tileset:HTMLImageElement,tileSize:number,tile:tile){
         this.tile.x = this.tileData[tile][1]*this.imgsize;
         this.tile.y = this.tileData[tile][0]*this.imgsize;
         this.tilesize=tileSize;
         this.ctx=ctx;
         this.img=tileset;
-        console.log(tile,this.tile)
     }
    
    
