@@ -8,36 +8,25 @@ const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 const aspectRatio = 16 / 9;
 const CANVAS_WIDTH = canvas.width = window.innerWidth;
 const CANVAS_HEIGHT = canvas.height = window.innerHeight;
-let initialSpeed =5;
-let gameSpeed:number =0;
 
 
 
 
-let imagesLoaded = 0;
 
-function animate() {
-    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    
-    animatePlayer();
-
-
-    requestAnimationFrame(animate);
-}
-
-function animatePlayer() {
-    player.update();
-}
 const eventManager = new EventManager();
-
-const player = new Player(eventManager,CANVAS_WIDTH);
-;
 const tileSize = CANVAS_HEIGHT/20
-const level = new Level(ctx,'../levels/level1.json',tileSize,{x:0,y:0,w:CANVAS_WIDTH,h:CANVAS_HEIGHT})
-//animatelevel();
+const rows =40; 
+const cols =30;
+console.log(cols,rows)
+const camera = new Camera(CANVAS_WIDTH,CANVAS_HEIGHT,tileSize);
+const player = new Player(eventManager,CANVAS_WIDTH);
+const level = new Level(ctx,'../levels/level1.json',tileSize,0,0,cols,rows)
+animatelevel();
 
 function animatelevel(){
-   // ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    level.render(0,0);
     requestAnimationFrame(animatelevel);
 }
+
 //const camera = new Camera(CANVAS_WIDTH,CANVAS_HEIGHT);

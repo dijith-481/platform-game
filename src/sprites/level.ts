@@ -1,3 +1,5 @@
+
+type tile = 'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'|'i';
 export class Level {
     x:number = 0;
     y:number = 0;
@@ -9,7 +11,8 @@ export class Level {
     cameraY:number;
     levelArray!:[number[], string[]][];
     tileset = new Image();
-
+    map!:tile[][];
+    tiles:Map<tile,Tile> = new Map();
     
     constructor(ctx: CanvasRenderingContext2D,levelPath:string,tileSize:number,cameraX:number,cameraY:number,screenCols:number,screenRows:number) {
         this.tileSize = tileSize;
@@ -18,8 +21,13 @@ export class Level {
         this.cameraY= cameraY;
         this.screenCols =screenCols;
         this.screenRows = screenRows;
-        this.loadLevelData(levelPath);
+        this.map =Array.from({length:this.screenCols},()=>Array(this.screenRows).fill(0));
         this.tileset.src = '../assets/grounds/ground.png';
+        this.tileset.onload = () => {
+            this.loadLevelData(levelPath);
+        };
+        this.createCommonTiles()
+        
         
     }
      async loadLevelData(levelPath: string) {
@@ -38,23 +46,38 @@ export class Level {
             this.loadItemtoMap(element[1],element[0][0],element[0][1]);
         })
     }
-    private mapwidth = 80;
-    private mapheight = 40;
-    map =Array.from({length:this.mapheight},()=>Array(this.mapwidth).fill(0));
+    
     
     loadItemtoMap(item:string[],x:number,y:number){
         item.forEach((element,yindex) => {
-            const row = element.split("");
+            const row = element.split("") as tile[];
             row.forEach((tile,xindex) => {
-                this.map[yindex+y][xindex+x]=1;
+                this.map[yindex+y][xindex+x]=tile;
             })
         });
         console.log(this.map)
     }
-    
-    
+   createCommonTiles(){
+    this.tiles.set('a',new Tile(this.ctx,this.tileset,this.tileSize,'a'));
+    this.tiles.set('b',new Tile(this.ctx,this.tileset,this.tileSize,'b'));
+    this.tiles.set('c',new Tile(this.ctx,this.tileset,this.tileSize,'c'));
+    this.tiles.set('d',new Tile(this.ctx,this.tileset,this.tileSize,'d'));
+    this.tiles.set('e',new Tile(this.ctx,this.tileset,this.tileSize,'e'));
+    this.tiles.set('f',new Tile(this.ctx,this.tileset,this.tileSize,'f'));
+    this.tiles.set('g',new Tile(this.ctx,this.tileset,this.tileSize,'g'));
+    this.tiles.set('h',new Tile(this.ctx,this.tileset,this.tileSize,'h'));
+    this.tiles.set('i',new Tile(this.ctx,this.tileset,this.tileSize,'i'));
+   } 
+   render(x:number,y:number){
+    this.map.forEach((row,yindex) => {
+        row.forEach((tile,xindex) => {
+            if(tile){
+                this.tiles.get(tile)?.render(x+xindex*this.tileSize,y+yindex*this.tileSize);
+            }
+        })
+}) 
 
-    }
+    }}
     
     
 
@@ -80,16 +103,18 @@ class Tile{
     }
 
     constructor(ctx: CanvasRenderingContext2D,tileset:HTMLImageElement,tileSize:number,tile:'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'|'i'){
-        this.tile.x = this.tileData[tile][0];
-        this.tile.y = this.tileData[tile][1];
+        this.tile.x = this.tileData[tile][1]*this.imgsize;
+        this.tile.y = this.tileData[tile][0]*this.imgsize;
         this.tilesize=tileSize;
         this.ctx=ctx;
         this.img=tileset;
+        console.log(tile,this.tile)
     }
    
    
     render(x:number,y:number){
         this.ctx.drawImage(this.img,this.tile.x,this.tile.y,this.imgsize,this.imgsize,x,y,this.tilesize,this.tilesize);
+        
     }
     }
 class Platform{
@@ -164,7 +189,7 @@ class Platform{
 
     }
     private createTile(x:number,y:number,pos:{x:number,y:number}){
-        this.tiles.push(new Tile(this.ctx,x,y,this.tileSize,this.imgSize,pos));
+       // this.tiles.push(new Tile(this.ctx,x,y,this.tileSize,this.imgSize,pos));
        
 this.ctx.fillStyle = 'red';
         this.ctx.fillRect(x,y,this.tileSize-2,this.tileSize-2);
@@ -173,7 +198,7 @@ this.ctx.fillStyle = 'red';
     }
     update(deltax:number,deltay:number,camerax:number,cameray:number){
         this.tiles.forEach(tile => {
-            tile.update(deltax,deltay,camerax,cameray);
+        //    tile.update(deltax,deltay,camerax,cameray);
         })
     }
 }
