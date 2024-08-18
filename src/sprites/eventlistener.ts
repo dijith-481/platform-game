@@ -48,9 +48,11 @@ export class EventManager{
         })
         
     }
-    checkCollision(x:number,y:number){
+    checkCollision(pos:{x:number,y:number},tileSize:number){
+         const x = Math.floor(pos.x/tileSize);
+    const y = Math.floor(pos.y/tileSize)+2;
         try{
-            if(this.map[y][x]){
+            if(this.map[y][x]!='0'){
             return true;
         }else{
             return false;

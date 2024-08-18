@@ -52,6 +52,7 @@ export class Level {
          }
      }
     loadMapItems(){
+        console.log(this.map)
         this.levelArray.forEach(element =>{
             this.loadItemtoMap(element[1],element[0][0],element[0][1]);
         })
@@ -59,9 +60,11 @@ export class Level {
     }
     
     
-    loadItemtoMap(item:string[],x:number,y:number){
+    loadItemtoMap(item:string[],y:number,x:number){
+
         item.forEach((element,yindex) => {
             const row = element.split("") as tile[];
+
             row.forEach((tile,xindex) => {
                 this.map[yindex+y][xindex+x]=tile;
             })
@@ -81,14 +84,12 @@ export class Level {
     this.loading();
 } 
    render(x:number,y:number){
-    this.map.forEach((row,yindex) => {
-        row.forEach((tile,xindex) => {
-            if(tile){
-                this.tiles.get(tile)?.render(x+xindex*this.tileSize,y+yindex*this.tileSize);
-            }
-        })
-}) 
-
+    for(let i=0;i<this.screenRows;i++){
+        for(let j=0;j<this.screenCols;j++){
+            this.tiles.get(this.map[i][j])?.render(x+j*this.tileSize,y+i*this.tileSize);
+        }
+    }
+  
     }}
     
     
