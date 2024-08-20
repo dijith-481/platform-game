@@ -83,9 +83,9 @@ export class Level {
     this.tiles.set('j',new Tile(this.ctx,this.tileset,this.tileSize,'j'));
     this.loading();
 } 
-   render(x:number,y:number){
-    for(let i=0;i<this.screenRows;i++){
-        for(let j=0;j<this.screenCols;j++){
+   render(x:number,y:number,w:number,h:number){
+    for(let i=h;i<this.screenRows+h;i++){
+        for(let j=w;j<this.screenCols+w;j++){
             this.tiles.get(this.map[i][j])?.render(x+j*this.tileSize,y+i*this.tileSize);
         }
     }

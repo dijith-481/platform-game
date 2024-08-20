@@ -40,7 +40,6 @@ export class Player {
         
     }
   private handleKeyUp(eventdata:string){
-    console.log(this.pos.x)
     this.keyPressed[eventdata]=false;
         
     }
@@ -49,37 +48,11 @@ export class Player {
         );
     }
 
-    updateGravity(collide:boolean,jump:boolean){
-        if (collide){
-            this.pos.y- this.pos.y%this.tileSize;
-            this.yvelocity=0;
-            if(jump){
-                this.yvelocity=-8;
-            }
-        }
-        else{
-            this.yvelocity+=0.4;
-        }
-        return this.pos.y
-    }
-    updateXmovement(collide:boolean,right:boolean,left:boolean){
-           this.pos.x+=this.xvelocity;
-           if (collide){
-            this.pos.x-=this.xvelocity;
-            this.xvelocity=0;
-            
-           }if(right){
-                this.xvelocity+=1;
-            }
-            if(left){
-                this.xvelocity-=1;
-            }
-           this.xvelocity*=0.9;
-           return this.pos.x
-    }
+    
+    
     render(x:number,y:number){
         this.ctx.fillStyle = 'red';
-        this.ctx.fillRect(x,y,this.tileSize,this.tileSize*2);
+        this.ctx.fillRect(x,y,this.tileSize,this.tileSize);
     }
 
     updatey(){ 
@@ -101,7 +74,7 @@ export class Player {
     
 } 
        
-    private updatex(){
+     updatex(){
            this.pos.x+=this.xvelocity;
            if (this.Collide()){
             this.pos.x-=this.xvelocity;
@@ -126,7 +99,7 @@ export class Player {
     }
     draw(){
         this.ctx.fillStyle = 'red';
-        this.ctx.fillRect(this.pos.x,this.pos.y,this.tileSize,this.tileSize*2);
+        this.ctx.fillRect(this.pos.x,this.pos.y,this.tileSize,this.tileSize);
     }
    
 }
