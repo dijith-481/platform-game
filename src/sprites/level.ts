@@ -1,6 +1,6 @@
 
 import { EventManager } from "./eventlistener";
-type tile = 'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'|'i'|'j';
+type tile = 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z';
 export class Level {
     x:number = 0;
     y:number = 0;
@@ -81,16 +81,37 @@ export class Level {
     this.tiles.set('h',new Tile(this.ctx,this.tileset,this.tileSize,'h'));
     this.tiles.set('i',new Tile(this.ctx,this.tileset,this.tileSize,'i'));
     this.tiles.set('j',new Tile(this.ctx,this.tileset,this.tileSize,'j'));
+    this.tiles.set('k',new Tile(this.ctx,this.tileset,this.tileSize,'k'));
+    this.tiles.set('l',new Tile(this.ctx,this.tileset,this.tileSize,'l'));
+    this.tiles.set('m',new Tile(this.ctx,this.tileset,this.tileSize,'m'));
+    this.tiles.set('n',new Tile(this.ctx,this.tileset,this.tileSize,'n'));
+    this.tiles.set('o',new Tile(this.ctx,this.tileset,this.tileSize,'o'));
+    this.tiles.set('p',new Tile(this.ctx,this.tileset,this.tileSize,'p'));
+    this.tiles.set('q',new Tile(this.ctx,this.tileset,this.tileSize,'q'));
+    this.tiles.set('r',new Tile(this.ctx,this.tileset,this.tileSize,'r'));
+    this.tiles.set('s',new Tile(this.ctx,this.tileset,this.tileSize,'s'));
+    this.tiles.set('t',new Tile(this.ctx,this.tileset,this.tileSize,'t'));
+    this.tiles.set('u',new Tile(this.ctx,this.tileset,this.tileSize,'u'));
+    this.tiles.set('v',new Tile(this.ctx,this.tileset,this.tileSize,'v'));
+    this.tiles.set('w',new Tile(this.ctx,this.tileset,this.tileSize,'w'));
+    this.tiles.set('x',new Tile(this.ctx,this.tileset,this.tileSize,'x'));
+    this.tiles.set('y',new Tile(this.ctx,this.tileset,this.tileSize,'y'));
+    this.tiles.set('z',new Tile(this.ctx,this.tileset,this.tileSize,'z'));
+
     this.loading();
 } 
    render(x:number,y:number,w:number,h:number){
     for(let i=h;i<this.screenRows+h;i++){
         for(let j=w;j<this.screenCols+w;j++){
+            try{
             this.tiles.get(this.map[i][j])?.render(x+j*this.tileSize,y+i*this.tileSize);
         }
+    
+      catch (error){
+        
     }
-  
-    }}
+}
+    }}}
     
     
 
@@ -113,7 +134,23 @@ class Tile{
         'g':[2,0],
         'h':[2,1],
         'i':[2,2],
-        'j':[6,2]
+        'j':[3,6],
+        'k':[6,0],	
+        'l':[3,8],
+        'm':[3,9],
+        'n':[3,10],
+        'o':[3,10],
+        'p':[4,8],
+        'q':[12,0],
+        'r':[12,1],
+        's':[12,2],
+        't':[1,7],
+        'u':[13,8],
+        'v':[15,11],
+        'w':[6,0],
+        'x':[3,13],
+        'y':[4,0],
+        'z':[6,2],
     }
 
     constructor(ctx: CanvasRenderingContext2D,tileset:HTMLImageElement,tileSize:number,tile:tile){

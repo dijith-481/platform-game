@@ -14,16 +14,16 @@ const controller =new Controller();
 
 
 
-const tileSize = CANVAS_HEIGHT/20
-const screenCols = Math.ceil(CANVAS_WIDTH/tileSize)+1;
-const screenRows = 21;
+const tileSize = CANVAS_HEIGHT/16
+const screenCols = Math.ceil(CANVAS_WIDTH/tileSize);
+const screenRows = 17;
 const rows =32; 
 const cols =32;
 const gameMap = Array.from({length:rows},()=>Array(cols*2).fill(0));
 console.log(cols,rows)
 const eventManager = new EventManager(gameMap);
-const camera = new Camera();
-const player = new Player(eventManager,ctx,tileSize,3,6);
+const camera = new Camera(0,tileSize*5);
+const player = new Player(eventManager,ctx,tileSize,10,12);
 const level = new Level(ctx,eventManager,'../levels/level1.json',gameMap,tileSize,0,0,screenCols,screenRows)
 
 
@@ -32,34 +32,56 @@ eventManager.subscribe('levelloaded',()=>{
 })
 
 function animatelevel(){
-    ctx.fillStyle = "#ffffff3f";
+    ctx.fillStyle = "#ffffff8f";
     ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
     gameloop();
     requestAnimationFrame(animatelevel);
 }
+let flagcamera=false;
 function gameloop(){
-    let d =0
+    let d =0;
+    let e = 0;
     if (controller.keys.f){
         display();
     }
     let playerY =  updateY()- camera.y;
     
-    let playerX =updateX()-camera.x; 
-    if(playerX>CANVAS_WIDTH-tileSize*8){
-         camera.x+=playerX-CANVAS_WIDTH+tileSize*8;
+    let playerX =updateX()-camera.x;
+    updateCamera(playerX,playerY)
+        
+         //camera.x+=playerX-CANVAS_WIDTH+tileSize*8;
+    /*if(playerX< tileSize*6){
+        flagcamera=true;
+        camera.x+=playerX-tileSize*6;
     }
-    if(playerX<tileSize*3){
-        camera.x+=playerX-tileSize*3;
+    if (flagcamera && !controller.keys.any){
+        camera.x+=5;
     }
+    if(playerX<tileSize*12){
+        flagcamera=false;
+    }*/
        
         d= Math.floor(camera.x/tileSize)
-     
+        e = Math.floor(camera.y/tileSize) 
+        
     //  player.updatey()
 
-    level.render(-camera.x,0,d,0);
+    level.render(-camera.x,-camera.y,d,e);
       player.render(playerX,playerY)
 }
 
+
+function updateCamera(playerX:number,playerY:number){
+camera.x+= Math.floor((playerX - tileSize*5)/200)
+if (camera.x > player.pos.x - tileSize*2){
+    camera.x=player.pos.x - tileSize*2;
+}
+camera.y+= Math.floor((playerY - tileSize*5)/100)
+if (camera.x > player.pos.x - tileSize*2){
+    camera.x=player.pos.x - tileSize*2;
+}
+
+}
 
 /**
  * Update the Y position of the player.
@@ -74,11 +96,11 @@ function updateY(){
             player.pos.y-= player.pos.y%tileSize * Math.sign(player.yvelocity); 
             player.yvelocity=0;
             if(controller.keys.w && sign===1){
-                player.yvelocity=-12;
+                player.yvelocity=-tileSize/3;
             }
         }
         else{
-            player.yvelocity+=0.4;
+            player.yvelocity+=tileSize/64;
         }
         return player.pos.y
 }
@@ -96,12 +118,12 @@ function updateX(){
             player.xvelocity=0
             
            }if(controller.keys.d){
-                player.xvelocity+=1;
+                player.xvelocity+=tileSize/64;
             }
             if(controller.keys.a){
-                player.xvelocity-=1;
+                player.xvelocity-=tileSize/64;
             }
-           player.xvelocity*=0.95;
+           player.xvelocity*=0.9;
            return player.pos.x
 }
 function checkCollision(pos:{x:number,y:number},dir:'x'|'y'|'x1'|'y1',sign:number){
@@ -149,5 +171,9 @@ function display(){
     console.log(player.pos.y%tileSize,player.pos.x%tileSize)
     console.log("right:",checkCollision(player.pos,'x',1),"down:",checkCollision(player.pos,'y',1))
     console.log("left:",checkCollision(player.pos,'x',-1),"up:",checkCollision(player.pos,'y',-1))
+    console.log("playerX: ",player.pos.x-camera.x)
+    console.log("playerY: ",player.pos.y-camera.y)
+    console.log("cameray: ",camera.y)
+    console.log("cameraX: ",camera.x)
 
 }
