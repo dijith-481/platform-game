@@ -3,8 +3,11 @@ export class Player {
    pos:{x:number,y:number}={x:0,y:0};
     x!:number;
     y!:number; 
+    w:number
+    h:number
     xvelocity:number=0;
     yvelocity:number=0;
+    img:HTMLImageElement;
     private tileSize:number;
     private row:number;
     private col:number;
@@ -15,9 +18,13 @@ export class Player {
         this.pos.x =  col*tileSize;
         this.pos.y = row*tileSize;
         this.tileSize = tileSize;
+        this.w =tileSize*18/64;
+        this.h=tileSize*48/64;
         this.row = row;
         this.col = col;
         this.ctx = ctx;
+        this.img = new Image();
+        this.img.src = 'assets/player/walk.png';
         this.eventManager = eventManager;
         this.keyPressed={
             a:false,
@@ -49,10 +56,18 @@ export class Player {
     }
 
     
-    
-    render(x:number,y:number){
+   private walksprite=0 
+    render(x:number,y:number,costumex:number,dir:number){
+        dir =dir?dir:1
         this.ctx.fillStyle = 'red';
-        this.ctx.fillRect(x,y,this.tileSize,this.tileSize);
+        this.ctx.fillRect(x,y,this.w,this.h);
+        this.ctx.save();
+        this.ctx.scale(dir,1)
+        this.walksprite =costumex
+        this.ctx.drawImage(this.img,this.walksprite*32,0,32,32,dir*(x+this.w/2)-this.tileSize/2,y-this.tileSize+this.h,this.tileSize,this.tileSize);
+        this.ctx.restore();
+        
+        
     }
 
     updatey(){ 

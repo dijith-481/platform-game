@@ -1,6 +1,6 @@
 
 import { EventManager } from "./eventlistener";
-type tile = 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z';
+type tile = '#'|'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z';
 export class Level {
     x:number = 0;
     y:number = 0;
@@ -104,6 +104,11 @@ export class Level {
     for(let i=h;i<this.screenRows+h;i++){
         for(let j=w;j<this.screenCols+w;j++){
             try{
+            if (this.map[i][j]=='#'){
+                this.ctx.fillStyle = 'blue';
+                this.ctx.fillRect(x+j*this.tileSize,y+i*this.tileSize,this.tileSize/4,this.tileSize/4);
+            }
+            else
             this.tiles.get(this.map[i][j])?.render(x+j*this.tileSize,y+i*this.tileSize);
         }
     
@@ -124,7 +129,7 @@ class Tile{
     ctx: CanvasRenderingContext2D;
     img!:HTMLImageElement;
     tile:{x:number,y:number}={x:0,y:0};
-    tileData ={
+    tileData:{[key:string]:[number,number]} ={
         'a':[0,0],
         'b':[0,1],
         'c':[0,2],
@@ -150,10 +155,10 @@ class Tile{
         'w':[6,0],
         'x':[3,13],
         'y':[4,0],
-        'z':[6,2],
+        'z':[6,2]
     }
 
-    constructor(ctx: CanvasRenderingContext2D,tileset:HTMLImageElement,tileSize:number,tile:tile){
+    constructor(ctx: CanvasRenderingContext2D,tileset:HTMLImageElement,tileSize:number,tile:string){
         this.tile.x = this.tileData[tile][1]*this.imgsize;
         this.tile.y = this.tileData[tile][0]*this.imgsize;
         this.tilesize=tileSize;

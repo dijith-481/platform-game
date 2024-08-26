@@ -12,28 +12,40 @@ const CANVAS_WIDTH = canvas.width = window.innerWidth;
 const CANVAS_HEIGHT = canvas.height = window.innerHeight;
 const controller = new Controller();
 const tileSize = CANVAS_HEIGHT / 16
-const screenCols = Math.ceil(CANVAS_WIDTH / tileSize);
-const screenRows = 17;
+const screenCols = Math.ceil(CANVAS_WIDTH / tileSize)+1;
+const screenRows = Math.ceil(CANVAS_HEIGHT / tileSize)+1;
 const rows = 32;
 const cols = 32;
 const gameMap = Array.from({ length: rows }, () => Array(cols * 2).fill(0));
 const eventManager = new EventManager(gameMap);
-const camera = new Camera(0, tileSize * 5);
-const player = new Player(eventManager, ctx, tileSize, 10, 12);
+const camera = new Camera(0,0);
+const player = new Player(eventManager, ctx, tileSize, 2, 7);
 const level = new Level(ctx, eventManager, '../levels/level1.json', gameMap, tileSize, 0, 0, screenCols, screenRows)
+const jumpSpeed= tileSize*20/64
+const friction =0.9;
+const gravity = tileSize/64
+const xspeed =tileSize / 64;
+
+let jumpflag =false
 
 eventManager.subscribe('levelloaded', () => {
-    animatelevel();
+   requestAnimationFrame(animatelevel); 
 })
 let gameflag =true;
 let life = 5;
-function animatelevel() {
+let lasttime: number;
+function animatelevel(timestamp: number) {
+    if (!lasttime) lasttime = timestamp; 
+    const deltatime = timestamp - lasttime;
+    if (deltatime>=1000/60){
+         lasttime = timestamp;
     if (gameflag == false) {
         return;
     }
     ctx.fillStyle = "#0080808f";
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     gameloop();
+}
     requestAnimationFrame(animatelevel);
 }
 
@@ -50,9 +62,27 @@ function gameloop() {
     d = Math.floor(camera.x / tileSize)
     e = Math.floor(camera.y / tileSize)
     level.render(-camera.x, -camera.y, d, e);
-    player.render(playerX, playerY)
+    renderplayer(playerX,playerY)
     drawlife()
 }
+
+function renderplayer(x:number,y:number){
+let jump = Math.floor((player.yvelocity+jumpSpeed)/jumpSpeed*3);
+let dir = Math.sign(player.xvelocity)
+if (jumpflag){
+
+     player.img.src = 'assets/player/jump.png';
+    player.render(x,y,jump+1,dir)
+   
+ } 
+ else{
+    let walk = Math.floor(player.pos.x/8)
+    walk%=6
+    player.img.src = 'assets/player/walk.png';
+    player.render(x,y,walk,dir)
+ }}
+
+
 function drawlife(){
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(10, 10, 10*5, 10);
@@ -81,27 +111,29 @@ function updateY() {
     let flag =true
     if (player.yvelocity >tileSize*28/64)
         flag = false
+    if (Math.abs(player.yvelocity)> 4*gravity)
     player.pos.y += player.yvelocity;
         const sign = Math.sign(player.yvelocity);
     if (checkCollision(player.pos, 'y', sign)) {
         if (flag == false){
             life-= player.yvelocity/(tileSize*28/64);
-
+            
             console.log(life,tileSize*28/64)
-        }
+        }jumpflag=false
         if (life <= 0)
             gameflag = false
         if (sign === 1)
-            player.pos.y = Math.floor(player.pos.y / tileSize) * tileSize;
+             player.pos.y = Math.ceil(player.pos.y / tileSize) * tileSize - player.h 
         else
-            player.pos.y = Math.ceil(player.pos.y / tileSize) * tileSize;
+             player.pos.y = Math.ceil(player.pos.y / tileSize) * tileSize  
         player.yvelocity = 0;
         if (controller.keys.w && sign === 1) {
-            player.yvelocity = -tileSize*20 / 64;
+            jumpflag =true
+            player.yvelocity = -jumpSpeed 
         }
     }
     else {
-        player.yvelocity += tileSize / 64;
+        player.yvelocity +=gravity;
     }
     return player.pos.y
 }
@@ -116,18 +148,18 @@ function updateX() {
     const sign =Math.sign(player.xvelocity)
     if (checkCollision(player.pos, 'x', sign)) { 
         if (sign === 1) 
-            player.pos.x = Math.floor(player.pos.x / tileSize) * tileSize
+            player.pos.x = Math.ceil((player.pos.x) / tileSize) * tileSize -player.w
         else 
-        player.pos.x = Math.ceil(player.pos.x/tileSize)* tileSize 
+        player.pos.x = Math.ceil(player.pos.x/tileSize)* tileSize  
         player.xvelocity = 0
 
     } if (controller.keys.d) {
-        player.xvelocity += tileSize / 64;
+        player.xvelocity +=xspeed 
     }
     if (controller.keys.a) {
-        player.xvelocity -= tileSize / 64;
+        player.xvelocity -= xspeed 
     }
-    player.xvelocity *= 0.9;
+    player.xvelocity *= friction;
     return player.pos.x
 }
 
@@ -148,6 +180,9 @@ function isLower(char: string) {
 function checkCollision(pos: { x: number, y: number }, dir: 'x' | 'y' , sign: number) {
     function collide(x: number, y: number) {
        try{
+        if(gameMap[y][x]=='#'){
+            checkcollected(x,y)
+        }
         return isLower(gameMap[y][x]);
     } catch {
         return false;
@@ -156,25 +191,34 @@ function checkCollision(pos: { x: number, y: number }, dir: 'x' | 'y' , sign: nu
     if (dir === 'x') {
         if (sign === -1) {
             // checks topleft and bottomleft
-            return collide(Math.floor(pos.x / tileSize), Math.floor((pos.y) / tileSize)) ||
-                collide(Math.floor((pos.x) / tileSize), Math.floor((pos.y + tileSize - 1) / tileSize))
+            return collide(Math.floor((pos.x) / tileSize), Math.floor((pos.y) / tileSize)) ||
+                collide(Math.floor((pos.x) / tileSize), Math.floor((pos.y+player.h-1) / tileSize))
         }
         //checks topright and bottomright
-        return collide(Math.floor((pos.x + tileSize - 1) / tileSize), Math.floor((pos.y) / tileSize)) ||
-            collide(Math.floor((pos.x + tileSize - 1) / tileSize), Math.floor((pos.y + tileSize - 1) / tileSize))
+        return collide(Math.floor((pos.x+player.w-1) / tileSize), Math.floor((pos.y) / tileSize)) ||
+            collide(Math.floor((pos.x+player.w-1) / tileSize), Math.floor((pos.y+player.h-1) / tileSize))
     }
     if (dir === 'y') {
         if (sign === -1) {
             //checks topleft and topright
-            return collide(Math.floor(pos.x / tileSize), Math.floor((pos.y) / tileSize)) ||
-                collide(Math.floor((pos.x + tileSize - 1) / tileSize), Math.floor((pos.y) / tileSize))
+            return collide(Math.floor((pos.x) / tileSize), Math.floor((pos.y) / tileSize)) ||
+                collide(Math.floor((pos.x+player.w-1) / tileSize), Math.floor((pos.y) / tileSize))
         }
         //checks bottomleft and bottomright
-        return collide(Math.floor(pos.x / tileSize), Math.floor((pos.y + tileSize - 1) / tileSize)) ||
-            collide(Math.floor((pos.x + tileSize - 1) / tileSize), Math.floor((pos.y + tileSize - 1) / tileSize))
+        return collide(Math.floor((pos.x) / tileSize), Math.floor((pos.y+player.h-1) / tileSize)) ||
+            collide(Math.floor((pos.x+player.w-1) / tileSize), Math.floor((pos.y+player.h-1) / tileSize))
     }
 }
 
+
+function checkcollected(x:number,y:number){
+    if ((player.pos.x >= x * tileSize - player.w &&
+        player.pos.x <= x  * tileSize+tileSize/4 &&
+        player.pos.y >= y * tileSize-player.h &&
+        player.pos.y <= y* tileSize+tileSize/4)
+       )
+        gameMap[y][x] = '0';
+}
 
 function display() {
     console.log(player.pos.x, player.pos.y, player.pos.x + tileSize, player.pos.y + tileSize)
@@ -190,5 +234,5 @@ function display() {
     console.log("playerY: ", player.pos.y - camera.y)
     console.log("cameray: ", camera.y)
     console.log("cameraX: ", camera.x)
-
+    console.log(  x * tileSize , x  * tileSize+tileSize/4 , player.pos.y , y * tileSize ,y* tileSize+tileSize/4)
 }
