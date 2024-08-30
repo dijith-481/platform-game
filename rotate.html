@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Rotate Device</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
   <style>
     body {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
       background-color: #f0f0f0;
       
 font-family: sans-serif;
@@ -25,6 +27,8 @@ font-family: sans-serif;
 </head>
 <body>
   <div class="container">
+    <div class="icon"><img src="assets/logo.png" alt="Logo" >
+</div>
     <div class="icon">&#x21BA; </div> 
     <h1>Please rotate your device</h1>
     <p>For the best experience, please rotate your device to landscape mode.</p>
@@ -37,7 +41,7 @@ font-family: sans-serif;
         window.location.href = "index.html";
       }
     }
-    window.addEventListener("orientationchange", () => {
+    window.addEventListener("resize", () => {
      rotatescreen()
     });
   </script>

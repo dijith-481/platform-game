@@ -278,11 +278,11 @@ function renderplayer(pos: { x: number; y: number }) {
 function renderData() {
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(10, 10, 10 * 5, 10);
-  level.tiles.get('#')?.render(CANVAS_WIDTH-100,10,0)
+  level.tiles.get('#')?.render(CANVAS_WIDTH/2,10,0)
   ctx.font = "15px Arial";
-  ctx.fillText(coinCount.toString(), CANVAS_WIDTH - 60, 25);
+  ctx.fillText(coinCount.toString(), CANVAS_WIDTH/2+25, 22);
   ctx.fillStyle = "#ff0000";
-  ctx.fillRect(10, 10, 10 * life, 10);
+  ctx.fillRect(10, 10, 10 * life/2, 10);
 }
 
 /*
