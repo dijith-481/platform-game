@@ -1,0 +1,17 @@
+{
+  "name": "platform-game",
+  "version": "1.0.0",
+  "description": "platformer 2d",
+  "main": "main.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "serve dist"
+  },
+  "dependencies": {
+    "typescript": "^5.5.4",
+    "serve": "^14.2.1" 
+  },
+  "devDependencies": {},
+  "author": "Dijith Dinesh",
+  "license": "ISC"
+}
