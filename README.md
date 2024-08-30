@@ -1,6 +1,8 @@
 
 # 2D Platformer Game (TypeScript)
 
+#### Video Demo:  [Youtube/PlatformGame](https://youtu.be/pCfwaae1Xkc?si=mqeQbrc7ytJ6rAiP)
+#### Description:
 This is a 2D platformer game built using TypeScript. The Player can navigate through the different platforms  and collect coins to win the game.
 
 ## Technical Details
