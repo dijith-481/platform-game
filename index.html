@@ -2,13 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hello World</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="screenorientation" content="=landscape">
+  <title> 2D Platformer</title>
   <link href='/style.css' rel='stylesheet'>
 </head>
 <body>
   <canvas id ="game" ></canvas>
-  <script type="module"  src="dist/main.js"></script>
+ 
 
+  <button class="button" id="up">&#x2191;</button> 
+  <button class="button" id="right">&#x2192;</button>
+  <button class="button" id="left">&#x2190;</button>
+  <button class="button" id="fullscreen">&#x2922;</button>
+ <script type="module"  src="dist/main.js"></script>
 </body>
 </html>

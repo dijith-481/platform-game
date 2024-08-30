@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rotate Device</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      
+font-family: sans-serif;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    .icon {
+      font-size: 50px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">&#x21BA; </div> 
+    <h1>Please rotate your device</h1>
+    <p>For the best experience, please rotate your device to landscape mode.</p>
+  </div>
+
+  <script>
+    rotatescreen()
+    function rotatescreen(){
+       if (window.innerWidth > window.innerHeight) {
+        window.location.href = "index.html";
+      }
+    }
+    window.addEventListener("orientationchange", () => {
+     rotatescreen()
+    });
+  </script>
+</body>
+</html>

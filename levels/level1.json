@@ -18,16 +18,16 @@
       "deeeef000000000qrs0000qrs0p000de",
       "deeeef000000##000000000000p000de",
       "deeeef000000ac000000000000p000de",
-      "deeeef000#00gi000000000000p000de",
+      "deeeef000##0gi000000000000p000de",
       "deeeef000qs000000000000000p000de",
       "deeeef00000000000000000000p000de",
       "deeeef##00000#000000000000t000de",
       "deeeejrs000000000000###0000000de",
       "deeeef00000000000000qrs0000000de",
-      "deeeef###00##000###00000000000de",
+      "deeeef#######000###00000000000de",
       "deeeekbbbbxrs000qrs00000000000de",
-      "deeeeyhhhhi00000000000000###00de",
-      "deeeef000000000#0000000#####00de",
+      "deeeeyhhhhi000000000000#####00de",
+      "deeeef0000000###0000000#####00de",
       "deeeef0000000qrs0000000abbc000de",
       "deeeef00000000000000000deef000de",
       "deeeef000000#####000000deef###de",
@@ -36,7 +36,7 @@
       "deeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       "deeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       "deeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-      "deeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      "deeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
     ]
   ],
   "element2": [
@@ -45,9 +45,9 @@
       32
     ],
     [
-      "00000000000000000000000000000000",
-      "00000000000000000###000000000000",
-      "00000000000000000qrs000000###000",
+      "0000##00000000000000000000000000",
+      "0000##00000000000###000000000000",
+      "0000##00000000000qrs000000###000",
       "0000##000000###00000000000qrs000",
       "##00ac000000qrs0000000###0000000",
       "bc0#df0000000000000000qrs0000000",
@@ -71,7 +71,7 @@
       "f0###0000000000###abbbzeeeeeeeee",
       "f0###0000000000abbzeeeeeeeeeeeee",
       "kbbbc##abc00###deeeeeeeeeeeeeeee",
-      "eeeekbbzef00abbseeeeeeeeeeeeeeee",
+      "eeeekbbzef00abbzeeeeeeeeeeeeeeee",
       "eeeeeeeeef00deeeeeeeeeeeeeeeeeee",
       "eeeeeeeeef00deeeeeeeeeeeeeeeeeee",
       "eeeeeeeeef00deeeeeeeeeeeeeeeeeee",
@@ -123,22 +123,22 @@
   "element4":[
     [0,96],[
       
-	 "r00rr00000000rr00rr00000000rv00r",	
-	 "rr00rr00000000rrrr00000000rv00rv",	
-	 "0rr00rr00000000rr00000000rv00000",	
-	 "00rr00rr0000q000000s0000rv000000",	
-	 "000rr00rr000qrrrrrrs000rv00rv000",	
-	 "0000rr00rr000000000000rv00rv0000",	
-	 "00000rr00rr0000000000rv00rv00000",	
-	 "00#000rr00rr00000000rv00rv00000o",	
-	 "0###000rr00rr000000rv00rv0000#qv",	
-	 "#####000rr00rr0000rv00rv0000##00",	
-	 "qnrrrs000rr00rr00rv00rv0000qrrnc",	
-	 "0p00000000rr00rrrv00rv00000000df",	
-	 "0p####00000rr00rv00rv00000####df",	
-	 "qurrrrs00000rr0000rv00000qrrrrzf",	
-	 "0p00000000000rr00rv00000000000df",	
-	 "0p######000000rrrv000000######df",	
+	 "m#0qB#000000#qB##ls#000000#ls0#m",	
+	 "AB#0AB#00000##Arrv##00000#lv00lv",	
+	 "0AB#0AB#0000########0000#lv00000",	
+	 "00AB#0AB#000m######m000#lv0#0000",	
+	 "000AB#0AB#00Arrrrrrv00#lv0#ls000",	
+	 "0000AB#0AB#0000000000#lv0#lv0000",	
+	 "00000AB#0AB#00000000#lv0#lv0000#",	
+	 "00#000AB#0AB#000000#lv0#lv0000#m",	
+	 "0###000AB#0AB#0000#lv0#lv0000#qv",	
+	 "#####000AB#0AB#00#lv0#lv0000##00",	
+	 "qnrrrs000AB#0AB##lv0#lv0000qrrnc",	
+	 "0p00000000AB#0Arrv0#lv00000000df",	
+	 "0p####00000AB#0000#lv00000####df",	
+	 "qurrrrs00000AB#00#lv00000qrrrrzf",	
+	 "0p00000000000AB##lv00000000000df",	
+	 "0p######000000Arrv000000######df",	
 	 "qurrrrrrs00000000000000qrrrrrrzf",	
 	 "0p0000000000000000000000000000df",	
 	 "0p#########0000000000#########df",	
@@ -152,9 +152,9 @@
 	 "0p000000000###def###00000000deef",	
 	 "0p0000000000abzekbc000000000deef",	
 	 "0p0#########deeeeef#########deef",	
-	 "0kbbbbbbbbbbzeeeeekbbbbbbbbbzeek",	
-	 "0deeeeeeeeeeeeeeeeeeeeeeeeeeeeee",	
-	 "0ghhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"	
+	 "awbbbbbbbbbbzeeeeekbbbbbbbbbzeef",	
+	 "deeeeeeeeeeeeeeeeeeeeeeeeeeeeeef",	
+	 "ghhhhhhhhhhhhhhhhhhhhhhhhhhhhhhi"	
 	
     ]
   ]

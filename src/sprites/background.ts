@@ -1,4 +1,5 @@
- class Background {
+//not used in the geme for now still in development
+class Background {
     img: HTMLImageElement;
     x: number;
     speed: number;

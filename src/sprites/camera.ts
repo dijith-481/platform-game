@@ -1,3 +1,4 @@
+//camera used to follow player
 export class Camera{
     x:number;
     y:number;

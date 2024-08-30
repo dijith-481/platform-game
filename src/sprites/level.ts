@@ -1,11 +1,10 @@
 
 import { EventManager } from "./eventlistener";
-type tile ='0'|'@'|'#'|'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z';
 export class Level {
-    x:number = 0;
-    y:number = 0;
-    load =0;
-    screenRows:number;
+    private x:number = 0;
+    private y:number = 0;
+    private load =0;
+    private screenRows:number;
     eventManager:EventManager;
     screenCols:number;
     tileSize:number;
@@ -15,11 +14,11 @@ export class Level {
     coinSkin= new Image();
     levelArray!:[number[], string[]][];
     tileset = new Image();
-    map!:tile[][];
-    tiles:Map<tile,Tile> = new Map();
+    map!:string[][];
+    tiles:Map<string,Tile> = new Map();
     
 private coinskinpos=0  
-    constructor(ctx: CanvasRenderingContext2D,eventManager:EventManager,levelPath:string,map:tile[][],tileSize:number,cameraX:number,cameraY:number,screenCols:number,screenRows:number) {
+    constructor(ctx: CanvasRenderingContext2D,eventManager:EventManager,levelPath:string,map:string[][],tileSize:number,cameraX:number,cameraY:number,screenCols:number,screenRows:number) {
         this.tileSize = tileSize;
         this.ctx =ctx;
         this.cameraX = cameraX;
@@ -28,7 +27,7 @@ private coinskinpos=0
         this.screenRows = screenRows;
         this.map =map;
         this.eventManager = eventManager;
-        this.tileset.src = '../assets/grounds/tilesmap.png';
+        this.tileset.src = '../assets/grounds/ground.png';
         this.coinSkin.src = '../assets/collectables/coin.png';
         this.tileset.onload = () => {
             this.loading();
@@ -38,6 +37,11 @@ private coinskinpos=0
         
         
     }
+    /**
+     * @private
+     * @memberof Level
+     * keep track of if level is loaded.
+     */
     private loading(){
         this.load++;
         if (this.load === 3){
@@ -66,13 +70,17 @@ private coinskinpos=0
     loadItemtoMap(item:string[],y:number,x:number){
 
         item.forEach((element,yindex) => {
-            const row = element.split("") as tile[];
+            const row = element.split("") ;
 
             row.forEach((tile,xindex) => {
                 this.map[yindex+y][xindex+x]=tile;
             })
         });
     }
+    /*
+     *create tiles used in the game.
+     *
+     */
    createCommonTiles(){
     this.tiles.set('a',new Tile(this.ctx,this.tileset,32,this.tileSize,'a'));
     this.tiles.set('b',new Tile(this.ctx,this.tileset,32,this.tileSize,'b'));
@@ -101,9 +109,18 @@ private coinskinpos=0
     this.tiles.set('y',new Tile(this.ctx,this.tileset,32,this.tileSize,'y'));
     this.tiles.set('z',new Tile(this.ctx,this.tileset,32,this.tileSize,'z'));
     this.tiles.set('#',new Tile(this.ctx,this.coinSkin,16,this.tileSize/2,'#'));
-
+    this.tiles.set('A',new Tile(this.ctx,this.tileset,32,this.tileSize,'A'));
+    this.tiles.set('B',new Tile(this.ctx,this.tileset,32,this.tileSize,'B'));
     this.loading();
 } 
+    /*
+     *update and render  map.
+     * @param {number} x
+     * @param {number} y
+     * @param {number} w
+     * @param {number} h
+     * 
+     */
    render(x:number,y:number,w:number,h:number){
     for(let i=h;i<this.screenRows+h;i++){
         for(let j=w;j<this.screenCols+w;j++){
@@ -127,7 +144,10 @@ private coinskinpos=0
 
 }
     
-
+/*
+ *create tiles used in the game.
+ *
+ */
 class Tile{
     
     x!: number;
@@ -141,34 +161,34 @@ class Tile{
     tile:{x:number,y:number}={x:0,y:0};
     tileData:{[key:string]:[number,number]} ={
     
-	'a':[0,0],
+	'a':[5,6],
 	'b':[0,1],
-	'c':[0,2],
-	'd':[0,3],
-	'e':[0,4],
-	'f':[0,5],
-	'g':[0,6],
-	'h':[0,7],
-	'i':[0,8],
-	'j':[3,5],
-	'k':[1,2],
-	'l':[2,3],
-	'm':[99,99],
-	'n':[2,4],
-	'o':[1,8],
-	'p':[2,6],
-	'q':[2,0],
-	'r':[2,1],
-	's':[2,2],
-	't':[2,9],
-	'u':[2,7],
-	'v':[1,7],
-	'w':[99,99],
-	'x':[2,5],
-	'y':[1,0],
-	'z':[1,3],
-	'A':[0,1],
-	'B':[0,2], 
+	'c':[13,15],
+	'd':[12,4],
+	'e':[1,1],
+	'f':[11,8],
+	'g':[15,13],
+	'h':[9,12],
+	'i':[15,15],
+	'j':[13,8],
+	'k':[6,0],
+	'l':[11,10],
+	'm':[0,7],
+	'n':[3,10],
+	'o':[3,4],
+	'p':[4,8],
+	'q':[3,6],
+	'r':[14,1],
+	's':[15,11],
+	't':[1,7],
+	'u':[13,10],
+	'v':[11,11],
+	'w':[9,6],
+	'x':[3,13],
+	'y':[4,0],
+	'z':[7,10],
+    'A':[15,4],
+    'B':[3,15],
     '#':[0,0],
     '$':[0,0]
     }
@@ -190,88 +210,3 @@ class Tile{
         
     }
     }
-class Platform{
-    x:number;
-    y:number;
-    tiles:Tile[]=[];
-    tileSize:number;
-    width:number;
-    height:number;
-    ctx:CanvasRenderingContext2D;
-    imgSize = 32;
-    tileImg ={
-        lt :{x:0,y:0},
-        t :{x:32,y:0},
-        rt :{x:64,y:0},
-        lm :{x:0,y:32},
-        m :{x:32,y:32},
-        rm :{x:64,y:32},
-        lb :{x:0,y:64},
-        b :{x:32,y:64},
-        rb :{x:64,y:64},
-    }
-    constructor(ctx:CanvasRenderingContext2D,tileSize:number,tiledata:{id:number,type:string,x:number,y:number,w:number,h:number}){
-        this.tileSize=tileSize;
-        this.x= tiledata.x * this.tileSize;
-        this.y= tiledata.y * this.tileSize;
-        this.width=tiledata.w  ;
-        this.height=tiledata.h;
-        this.ctx=ctx;
-        
-        this.createPlatform();
-       
-
-    }
-
-    createPlatform(){
-        let x=this.x
-        let y = this.y;
-        this.createTile(x,y,this.tileImg['lt']);
-        x+=this.imgSize; 
-        for (let i = 0; i < this.width-2; i++) {
-            this.createTile(x,y,this.tileImg['t']);
-            x+=this.imgSize;
-        }
-        this.createTile(x,y,this.tileImg['rt']);
-       x=this.x;
-       y+=this.imgSize;
-        for (let i = 0; i < this.height-2; i++) {
-             
-            
-            this.createTile(x,y,this.tileImg['lm']);
-            x+=this.imgSize;
-            for (let j = 0; j < this.width-2; j++) {
-                this.createTile(x,y,this.tileImg['m']);
-                x+=this.imgSize;
-            }
-            this.createTile(x,y,this.tileImg['rm']);
-            x=this.x;
-            y+=this.imgSize;
-        }
-        
-        this.createTile(x,y,this.tileImg['lb']);
-        x+=this.imgSize;
-        for (let i = 0; i < this.width-2; i++) {
-           
-            this.createTile(x,y,this.tileImg['b']);
-             x+=this.imgSize;
-        }
-        
-        this.createTile(x,y,this.tileImg['rb']);
-        
-
-    }
-    private createTile(x:number,y:number,pos:{x:number,y:number}){
-       // this.tiles.push(new Tile(this.ctx,x,y,this.tileSize,this.imgSize,pos));
-       
-this.ctx.fillStyle = 'red';
-        this.ctx.fillRect(x,y,this.tileSize-2,this.tileSize-2);
-    
-    
-    }
-    update(deltax:number,deltay:number,camerax:number,cameray:number){
-        this.tiles.forEach(tile => {
-        //    tile.update(deltax,deltay,camerax,cameray);
-        })
-    }
-}
