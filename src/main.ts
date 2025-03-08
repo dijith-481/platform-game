@@ -4,7 +4,6 @@ import { Level } from "./sprites/level.js";
 import { Camera } from "./sprites/camera.js";
 import { Controller } from "./controller.js";
 
-
 //asks to rotate screen if it is in portrait mode
 if (window.innerHeight > window.innerWidth) {
   window.location.href = "rotate.html";
@@ -12,8 +11,7 @@ if (window.innerHeight > window.innerWidth) {
 const canvas = document.getElementById("game") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 const eventManager = new EventManager();
-const controller = new Controller(eventManager,ctx);
-
+const controller = new Controller(eventManager, ctx);
 
 eventManager.subscribe("fullscreen", () => {
   if (document.fullscreenElement) {
@@ -29,7 +27,6 @@ const tileSize = CANVAS_HEIGHT / 16;
 const screenCols = Math.ceil(CANVAS_WIDTH / tileSize) + 1;
 const screenRows = Math.ceil(CANVAS_HEIGHT / tileSize) + 1;
 
-
 const gameMap = Array.from({ length: 32 }, () => Array(32 * 5).fill(0));
 const camera = new Camera(0, 0);
 const player = new Player(eventManager, ctx, tileSize, 24, 7);
@@ -42,79 +39,86 @@ const level = new Level(
   0,
   0,
   screenCols,
-  screenRows
+  screenRows,
 );
-let playerPosScreen={x:0,y:0};
+let playerPosScreen = { x: 0, y: 0 };
 
 /*
  *game constants
  */
 const CAMERA_SMOOTHING = 50;
-const CAMERA_OFFSET_X = 2; 
+const CAMERA_OFFSET_X = 2;
 const cameraLookX = CANVAS_WIDTH / 3;
 const cameraLookY = CANVAS_HEIGHT / 2;
 const jumpSpeed = (tileSize * 20) / 64;
 const friction = 0.9;
 const gravity = tileSize / 64;
 const xspeed = tileSize / 64;
-const coinsToWin=100;
+const coinsToWin = 100;
 
 //game states and flags
 let coinCount = 0;
 let gameflag = true;
 let life = 10;
 
-let instructiontimer=600;
-
-
+let instructiontimer = 600;
 
 //start gameloop after loading level.
 eventManager.subscribe("levelloaded", () => {
   requestAnimationFrame(gameloop);
 });
 eventManager.subscribe("gameover", () => {
-  gameflag=false;
+  gameflag = false;
   eventManager.unsubscribe("gameover", gameover);
-  
- gameover(); 
 
-  
+  gameover();
 });
 eventManager.subscribe("victory", () => {
-  gameflag=false;
+  gameflag = false;
   eventManager.unsubscribe("victory", victory);
   victory();
-
 });
 /**
  * gameover screen
  */
-function gameover(){
-  ctx.fillStyle="#008080a0";
-  ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
-  ctx.font="30px Arial";
-  ctx.fillStyle="red";
-  ctx.fillText("Game Over",CANVAS_WIDTH/2-100,CANVAS_HEIGHT/2);
-  (document.getElementById("up") as HTMLButtonElement).innerHTML="W"
-  ctx.fillText("Press W to restart",CANVAS_WIDTH/2-100,CANVAS_HEIGHT/2+50);
-  ctx.fillText("Score: "+coinCount,CANVAS_WIDTH/2-100,CANVAS_HEIGHT/2+100);
-  
-  
+function gameover() {
+  ctx.fillStyle = "#008080a0";
+  ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  ctx.font = "30px Arial";
+  ctx.fillStyle = "red";
+  ctx.fillText("Game Over", CANVAS_WIDTH / 2 - 100, CANVAS_HEIGHT / 2);
+  (document.getElementById("up") as HTMLButtonElement).innerHTML = "W";
+  ctx.fillText(
+    "Press W to restart",
+    CANVAS_WIDTH / 2 - 100,
+    CANVAS_HEIGHT / 2 + 50,
+  );
+  ctx.fillText(
+    "Score: " + coinCount,
+    CANVAS_WIDTH / 2 - 100,
+    CANVAS_HEIGHT / 2 + 100,
+  );
 }
 /**
  * victory screen
  */
-function victory(){
-  ctx.fillStyle="#a0facea0";
-  ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
-  ctx.font="30px Arial";
-  ctx.fillStyle="red";
-  (document.getElementById("up") as HTMLButtonElement).innerHTML="W"
-  ctx.fillText("You Won",CANVAS_WIDTH/2-100,CANVAS_HEIGHT/2);
-  ctx.fillText("Press w to restart",CANVAS_WIDTH/2-100,CANVAS_HEIGHT/2+50);
-  ctx.fillText("Score: "+coinCount,CANVAS_WIDTH/2-100,CANVAS_HEIGHT/2+100);
-
-  
+function victory() {
+  ctx.fillStyle = "#a0facea0";
+  ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  ctx.font = "30px Arial";
+  ctx.fillStyle = "red";
+  (document.getElementById("up") as HTMLButtonElement).innerHTML = "W";
+  ctx.fillText("You Won", CANVAS_WIDTH / 2 - 100, CANVAS_HEIGHT / 2);
+  ctx.fillText(
+    "Press w to restart",
+    CANVAS_WIDTH / 2 - 100,
+    CANVAS_HEIGHT / 2 + 50,
+  );
+  ctx.fillText(
+    "Score: " + coinCount,
+    CANVAS_WIDTH / 2 - 100,
+    CANVAS_HEIGHT / 2 + 100,
+  );
 }
 
 let lasttime: number; //to calculate framerate
@@ -125,40 +129,46 @@ let lasttime: number; //to calculate framerate
  */
 function gameloop(timestamp: number) {
   if (!lasttime) lasttime = timestamp;
-    const deltatime = timestamp - lasttime;
-  if (deltatime >= 1000 / 60) {
+  const deltatime = timestamp - lasttime;
+  if (deltatime >= 1000 / 120) {
     lasttime = timestamp;
-   
-    if (player.isDying==false) {
-       playerPosScreen = updatePlayerPos();
-       updateCamera(playerPosScreen);
+
+    if (player.isDying == false) {
+      playerPosScreen = updatePlayerPos();
+      updateCamera(playerPosScreen);
     }
     renderBg();
     if (controller.keys.f) {
       display();
     }
-    if (instructiontimer>0){
-    instructions() 
+    if (instructiontimer > 0) {
+      instructions();
       instructiontimer--;
     }
-    
-    level.render(-camera.x, -camera.y, Math.floor(camera.x / tileSize),Math.floor(camera.y / tileSize));
+
+    level.render(
+      -camera.x,
+      -camera.y,
+      Math.floor(camera.x / tileSize),
+      Math.floor(camera.y / tileSize),
+    );
     updatePlayerCostume();
     renderplayer(playerPosScreen);
     renderData();
   }
   if (gameflag) {
-  requestAnimationFrame(gameloop);
-}}
+    requestAnimationFrame(gameloop);
+  }
+}
 /**
  * render the background
  * with given color .
  *
  * @returns {void}
  */
-function renderBg(){
-    ctx.fillStyle = "#0080808f";
-    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+function renderBg() {
+  ctx.fillStyle = "#0080808f";
+  ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 }
 
 /**
@@ -170,35 +180,36 @@ function renderBg(){
  * @modifies player.yvelocity -Updates the player's Y velocity based on gravity and keypress
  * @returns {{x: number, y: number}} players relative position to camera.
  */
-function updatePlayerPos(){
+function updatePlayerPos() {
   /**
-     * Update the Y position of the player.
-     * @modifies player.pos.y - Updates the player's Y position based on Y velocity and collision.
-     * @modifies player.yvelocity - Updates the player's Y velocity based on gravity and keypress.
-     * @returns {number} UPdated players Y position.
-  */
+   * Update the Y position of the player.
+   * @modifies player.pos.y - Updates the player's Y position based on Y velocity and collision.
+   * @modifies player.yvelocity - Updates the player's Y velocity based on gravity and keypress.
+   * @returns {number} UPdated players Y position.
+   */
   function updateY() {
-    if (player.yvelocity>=tileSize*2/3)
-      player.isDying = true;
+    if (player.yvelocity >= (tileSize * 2) / 3) player.isDying = true;
     if (Math.abs(player.yvelocity) > 4 * gravity)
       player.pos.y += player.yvelocity;
     const sign = Math.sign(player.yvelocity);
     if (checkCollision(player.pos, "y", sign)) {
-    if (player.yvelocity > (tileSize*25) / 64) 
-      {player.isHurt = true;
-        life-= Math.floor((2** (player.yvelocity/((tileSize*25)/64)))/2);
+      if (player.yvelocity > (tileSize * 25) / 64) {
+        player.isHurt = true;
+        life -= Math.floor(
+          2 ** (player.yvelocity / ((tileSize * 25) / 64)) / 2,
+        );
       }
       player.isJumping = false;
-      if (life <= 0 ) player.isDying = true;
+      if (life <= 0) player.isDying = true;
       if (sign === 1)
         player.pos.y = Math.ceil(player.pos.y / tileSize) * tileSize - player.h;
       else player.pos.y = Math.ceil(player.pos.y / tileSize) * tileSize;
       player.yvelocity = 0;
       if (controller.keys.w && sign === 1) {
-        player.jumpTimer=0
-       player.isJumping = true;
-       player.jumppos.x = player.pos.x;
-       player.jumppos.y = player.pos.y;
+        player.jumpTimer = 0;
+        player.isJumping = true;
+        player.jumppos.x = player.pos.x;
+        player.jumppos.y = player.pos.y;
         player.yvelocity = -jumpSpeed;
       }
     } else {
@@ -231,14 +242,13 @@ function updatePlayerPos(){
     player.xvelocity *= friction;
     return player.pos.x;
   }
-  return { 'x':updateX() - camera.x,'y':updateY() - camera.y };
+  return { x: updateX() - camera.x, y: updateY() - camera.y };
 }
 
-
 /**
- * Updates the camera position to follow the player, with smoothing and 
+ * Updates the camera position to follow the player, with smoothing and
  * boundary checks to ensure the player remains within the visible area.
- * The camera's position is adjusted based on the player's position 
+ * The camera's position is adjusted based on the player's position
  * relative to the center and edges of the canvas.
  *
  * @param {object} playerPosition - The current position of the player.
@@ -251,11 +261,10 @@ function updateCamera(pos: { x: number; y: number }) {
   camera.y += Math.floor((pos.y - cameraLookY) / CAMERA_SMOOTHING);
   if (camera.x > player.pos.x - tileSize * CAMERA_OFFSET_X) {
     camera.x = player.pos.x - tileSize * CAMERA_OFFSET_X;
-  } else if (pos.x > CANVAS_WIDTH - tileSize*CAMERA_OFFSET_X) {
-    camera.x += pos.x - (CANVAS_WIDTH - tileSize*CAMERA_OFFSET_X);
+  } else if (pos.x > CANVAS_WIDTH - tileSize * CAMERA_OFFSET_X) {
+    camera.x += pos.x - (CANVAS_WIDTH - tileSize * CAMERA_OFFSET_X);
   }
 }
-
 
 /**
  * Renders the player sprite on the canvas.
@@ -267,7 +276,14 @@ function updateCamera(pos: { x: number; y: number }) {
 function renderplayer(pos: { x: number; y: number }) {
   //update
   let dir = Math.sign(player.xvelocity);
-    player.render(pos.x, pos.y, Math.floor(player.pos.x/4), dir,camera.x,camera.y);
+  player.render(
+    pos.x,
+    pos.y,
+    Math.floor(player.pos.x / 4),
+    dir,
+    camera.x,
+    camera.y,
+  );
 }
 
 /**
@@ -278,23 +294,22 @@ function renderplayer(pos: { x: number; y: number }) {
 function renderData() {
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(10, 10, 10 * 5, 10);
-  level.tiles.get('#')?.render(CANVAS_WIDTH/2,10,0)
+  level.tiles.get("#")?.render(CANVAS_WIDTH / 2, 10, 0);
   ctx.font = "15px Arial";
-  ctx.fillText(coinCount.toString(), CANVAS_WIDTH/2+25, 22);
+  ctx.fillText(coinCount.toString(), CANVAS_WIDTH / 2 + 25, 22);
   ctx.fillStyle = "#ff0000";
-  ctx.fillRect(10, 10, 10 * life/2, 10);
+  ctx.fillRect(10, 10, (10 * life) / 2, 10);
 }
 
 /*
  *updates playerJump costume While Jumping.
  *
  */
-function updatePlayerCostume(){
- player.jumpposScreen.x=player.dir*(player.jumppos.x-camera.x+player.w/2)-tileSize/2;
-        player.jumpposScreen.y=player.jumppos.y-camera.y-tileSize+player.h;
+function updatePlayerCostume() {
+  player.jumpposScreen.x =
+    player.dir * (player.jumppos.x - camera.x + player.w / 2) - tileSize / 2;
+  player.jumpposScreen.y = player.jumppos.y - camera.y - tileSize + player.h;
 }
-
-
 
 /*
  * Checks if a character is a alphabet letter.
@@ -317,7 +332,7 @@ function isalphabet(char: string) {
 function checkCollision(
   pos: { x: number; y: number },
   dir: "x" | "y",
-  sign: number
+  sign: number,
 ) {
   function collide(x: number, y: number) {
     try {
@@ -336,7 +351,7 @@ function checkCollision(
         collide(Math.floor(pos.x / tileSize), Math.floor(pos.y / tileSize)) ||
         collide(
           Math.floor(pos.x / tileSize),
-          Math.floor((pos.y + player.h - 1) / tileSize)
+          Math.floor((pos.y + player.h - 1) / tileSize),
         )
       );
     }
@@ -344,11 +359,11 @@ function checkCollision(
     return (
       collide(
         Math.floor((pos.x + player.w - 1) / tileSize),
-        Math.floor(pos.y / tileSize)
+        Math.floor(pos.y / tileSize),
       ) ||
       collide(
         Math.floor((pos.x + player.w - 1) / tileSize),
-        Math.floor((pos.y + player.h - 1) / tileSize)
+        Math.floor((pos.y + player.h - 1) / tileSize),
       )
     );
   }
@@ -359,7 +374,7 @@ function checkCollision(
         collide(Math.floor(pos.x / tileSize), Math.floor(pos.y / tileSize)) ||
         collide(
           Math.floor((pos.x + player.w - 1) / tileSize),
-          Math.floor(pos.y / tileSize)
+          Math.floor(pos.y / tileSize),
         )
       );
     }
@@ -367,11 +382,11 @@ function checkCollision(
     return (
       collide(
         Math.floor(pos.x / tileSize),
-        Math.floor((pos.y + player.h - 1) / tileSize)
+        Math.floor((pos.y + player.h - 1) / tileSize),
       ) ||
       collide(
         Math.floor((pos.x + player.w - 1) / tileSize),
-        Math.floor((pos.y + player.h - 1) / tileSize)
+        Math.floor((pos.y + player.h - 1) / tileSize),
       )
     );
   }
@@ -391,20 +406,24 @@ function checkcollected(x: number, y: number) {
     player.pos.y <= y * tileSize + tileSize / 3
   ) {
     coinCount++;
-    if (coinCount>=coinsToWin){
+    if (coinCount >= coinsToWin) {
       setTimeout(() => {
-        eventManager.broadcast('victory','victory')
+        eventManager.broadcast("victory", "victory");
       }, 1000);
     }
     gameMap[y][x] = "0";
   }
 }
 
-function instructions(){
-  ctx.font="20px Arial";
-  ctx.fillStyle="white";
-  ctx.textAlign="center";
-  ctx.fillText("Use WAD to move Collect atleast 100 coins to win",CANVAS_WIDTH/2,CANVAS_HEIGHT/4)
+function instructions() {
+  ctx.font = "20px Arial";
+  ctx.fillStyle = "white";
+  ctx.textAlign = "center";
+  ctx.fillText(
+    "Use WAD to move Collect atleast 100 coins to win",
+    CANVAS_WIDTH / 2,
+    CANVAS_HEIGHT / 4,
+  );
 }
 
 /*
@@ -415,7 +434,7 @@ function display() {
     player.pos.x,
     player.pos.y,
     player.pos.x + tileSize,
-    player.pos.y + tileSize
+    player.pos.y + tileSize,
   );
   let x = Math.floor(player.pos.x / tileSize);
   let y = Math.floor(player.pos.y / tileSize);
@@ -427,13 +446,13 @@ function display() {
     "right:",
     checkCollision(player.pos, "x", 1),
     "down:",
-    checkCollision(player.pos, "y", 1)
+    checkCollision(player.pos, "y", 1),
   );
   console.log(
     "left:",
     checkCollision(player.pos, "x", -1),
     "up:",
-    checkCollision(player.pos, "y", -1)
+    checkCollision(player.pos, "y", -1),
   );
   console.log("playerX: ", player.pos.x - camera.x);
   console.log("playerY: ", player.pos.y - camera.y);
@@ -444,7 +463,6 @@ function display() {
     x * tileSize + tileSize / 4,
     player.pos.y,
     y * tileSize,
-    y * tileSize + tileSize / 4
+    y * tileSize + tileSize / 4,
   );
 }
-
