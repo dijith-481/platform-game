@@ -27,9 +27,25 @@ const tileSize = CANVAS_HEIGHT / 16;
 const screenCols = Math.ceil(CANVAS_WIDTH / tileSize) + 1;
 const screenRows = Math.ceil(CANVAS_HEIGHT / tileSize) + 1;
 
-const gameMap = Array.from({ length: 32 }, () => Array(32 * 5).fill(0));
+let gameMap = Array.from({ length: 32 }, () => Array(32 * 5).fill("0"));
+const mapString = localStorage.getItem("map");
+if (mapString) {
+  gameMap = JSON.parse(mapString);
+  console.log("Map loaded from localStorage.");
+  console.log(gameMap);
+} else {
+  console.warn("No map found in localStorage.");
+}
 const camera = new Camera(0, 0);
-const player = new Player(eventManager, ctx, tileSize, 24, 7);
+// const player = new Player(eventManager, ctx, tileSize, 24, 7);
+let px: number = 7;
+let py: number = 24;
+if (localStorage.px) {
+  console.log(localStorage.px, localStorage.py);
+  px = localStorage.px;
+  py = localStorage.py;
+}
+const player = new Player(eventManager, ctx, tileSize, py, px);
 const level = new Level(
   ctx,
   eventManager,
@@ -58,8 +74,15 @@ const coinsToWin = 100;
 
 //game states and flags
 let coinCount = 0;
+
+if (localStorage.coinCount) {
+  coinCount = localStorage.coinCount;
+}
 let gameflag = true;
 let life = 10;
+if (localStorage.life) {
+  life = localStorage.life;
+}
 
 let instructiontimer = 600;
 
@@ -70,13 +93,14 @@ eventManager.subscribe("levelloaded", () => {
 eventManager.subscribe("gameover", () => {
   gameflag = false;
   eventManager.unsubscribe("gameover", gameover);
-
+  localStorage.clear();
   gameover();
 });
 eventManager.subscribe("victory", () => {
   gameflag = false;
   eventManager.unsubscribe("victory", victory);
   victory();
+  localStorage.clear();
 });
 /**
  * gameover screen
@@ -135,6 +159,7 @@ function gameloop(timestamp: number) {
 
     if (player.isDying == false) {
       playerPosScreen = updatePlayerPos();
+      // console.log(playerPosScreen);
       updateCamera(playerPosScreen);
     }
     renderBg();
@@ -167,7 +192,7 @@ function gameloop(timestamp: number) {
  * @returns {void}
  */
 function renderBg() {
-  ctx.fillStyle = "#0080808f";
+  ctx.fillStyle = "#1212128f";
   ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 }
 
@@ -198,12 +223,16 @@ function updatePlayerPos() {
         life -= Math.floor(
           2 ** (player.yvelocity / ((tileSize * 25) / 64)) / 2,
         );
+        localStorage.life = life;
       }
       player.isJumping = false;
       if (life <= 0) player.isDying = true;
       if (sign === 1)
         player.pos.y = Math.ceil(player.pos.y / tileSize) * tileSize - player.h;
       else player.pos.y = Math.ceil(player.pos.y / tileSize) * tileSize;
+      localStorage.setItem("px", (player.pos.x / tileSize).toString());
+      localStorage.setItem("py", (player.pos.y / tileSize).toString());
+      console.log(localStorage.px, localStorage.py);
       player.yvelocity = 0;
       if (controller.keys.w && sign === 1) {
         player.jumpTimer = 0;
@@ -406,12 +435,19 @@ function checkcollected(x: number, y: number) {
     player.pos.y <= y * tileSize + tileSize / 3
   ) {
     coinCount++;
+    localStorage.coinCount = coinCount;
     if (coinCount >= coinsToWin) {
       setTimeout(() => {
         eventManager.broadcast("victory", "victory");
       }, 1000);
     }
+    // localStorage.map[y][x] = "0";
+
     gameMap[y][x] = "0";
+
+    const mapString = JSON.stringify(gameMap);
+    localStorage.setItem("map", mapString);
+    // localStorage.map = gameMap;
   }
 }
 
